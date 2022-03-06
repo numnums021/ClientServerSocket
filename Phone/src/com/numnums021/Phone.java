@@ -30,7 +30,7 @@ public class Phone implements Closeable {
         }
     }
 
-    public void write(String message) {
+    public void writeLine(String message) {
         try{
             writer.write(message);
             writer.newLine();
@@ -41,7 +41,7 @@ public class Phone implements Closeable {
         }
     }
 
-    public String read(){
+    public String readLine(){
         try{
             return reader.readLine();
         }
@@ -51,15 +51,11 @@ public class Phone implements Closeable {
     }
 
     private BufferedReader createReader() throws IOException {
-        return new BufferedReader(
-                new InputStreamReader(
-                        socket.getInputStream()));
+        return new BufferedReader(new InputStreamReader(socket.getInputStream()));
     }
 
     private BufferedWriter createWriter() throws IOException {
-        return new BufferedWriter(
-                new OutputStreamWriter(
-                        socket.getOutputStream()));
+        return new BufferedWriter(new OutputStreamWriter(socket.getOutputStream()));
     }
 
     @Override
