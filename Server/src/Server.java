@@ -1,7 +1,8 @@
 
+import com.numnums021.Phone;
+
 import java.io.*;
 import java.net.ServerSocket;
-import java.net.Socket;
 
 public class Server {
     static final int PORT = 8000;
@@ -12,33 +13,30 @@ public class Server {
             System.out.println("Server started");
 
             while (true) {
-            try(Socket socket = serverSocket.accept()){
-                System.out.println("Client connected");
-
-                    // создали другой поток, который умеет немного больше
-                    try (
-                            BufferedWriter writer =
-                                    new BufferedWriter(
-                                            new OutputStreamWriter(socket.getOutputStream()));
-                            BufferedReader reader =
-                                    new BufferedReader(
-                                            new InputStreamReader(socket.getInputStream()))) {
-
-                        String request = reader.readLine();
-                        System.out.println(request);
+                    Phone phone = new Phone(serverSocket);
+                    new Thread(()->{
+                        String request = phone.readLine();
+                        System.out.println("Request: " + request);
 
                         String response = "HI FROM SERVER: " + request.length();
-                        System.out.println(response);
 
-                        writer.write(response);
-                        writer.newLine();
-                        writer.flush();
+                        try {
+                            Thread.sleep(3000);
+                        } catch (InterruptedException ex){
+                            ex.printStackTrace();
+                        }
+                        phone.writeLine(response);
+                        System.out.println("Response: " + response);
+
+                        try {
+                            phone.close();
+                        } catch (IOException e) {
+                            e.printStackTrace();
+                        }
+                    }).start();
                     }
-                }
-            }
-
         } catch (IOException e) {
-            e.printStackTrace();
+            throw new RuntimeException(e);
         }
     }
 }
